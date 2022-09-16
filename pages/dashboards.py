@@ -1,6 +1,8 @@
-from dash import Dash, html, dcc, dash_table, Input, Output
 import dash
+from dash import Dash, html, dcc
 import dash_bootstrap_components as dbc
+from dash import callback, Input, Output, State
+from dash.dash_table.Format import Format, Group
 import plotly.express as px
 import pandas as pd
 import modules.database as database  # modules/database.py
