@@ -11,6 +11,6 @@ import modules.database as database  # modules/database.py
 
 dash.register_page(__name__, name='設定')
 
-page_header = dbc.Row(dbc.Col(dcc.Markdown(children='# 設定')))
+page_header = dbc.Row(dbc.Col(dcc.Markdown(children='### 設定')))
 page_content = dbc.Row(dbc.Col(dcc.Markdown(children='user setting')))
 layout = dbc.Container([page_header, page_content], fluid=True)

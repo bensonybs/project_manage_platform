@@ -10,7 +10,7 @@ import modules.database as database  # modules/database.py
 
 dash.register_page(__name__, path='/', name='首頁')
 
-page_header = dbc.Row(dbc.Col(dcc.Markdown(children='# 首頁')))
+page_header = dbc.Row(dbc.Col(dcc.Markdown(children='### 首頁')))
 page_content = dbc.Row([
     dbc.Col(dcc.Markdown(children='main page with information of the website'),
             width=6),

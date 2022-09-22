@@ -9,6 +9,6 @@ import modules.database as database  # modules/database.py
 
 
 dash.register_page(__name__, name='統計圖表')
-page_header = dbc.Row(dbc.Col(dcc.Markdown(children='# 儀表板')))
+page_header = dbc.Row(dbc.Col(dcc.Markdown(children='### 儀表板')))
 page_content = dbc.Row(dbc.Col(dcc.Markdown(children='dashboard of projects')))
 layout = dbc.Container([page_header, page_content], fluid=True)

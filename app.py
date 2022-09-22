@@ -24,6 +24,9 @@ navbar = dbc.NavbarSimple(
         for page in dash.page_registry.values()
     ],
     brand="南亞塑膠碳排減量專案管理平台",
+    brand_style={
+        'font-size': '40px'
+    },
     brand_href="/",
     color="primary",
     dark=True,
