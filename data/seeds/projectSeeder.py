@@ -21,7 +21,8 @@ production_emission = getDataFrameFromExcel('raw_production_emission')
 
 
 # Connect to local server
-client = MongoClient(os.environ['MONGODB_URI']) # Mongo Database URI, save in os.environ variable
+
+client = MongoClient(os.environ['MONGODB_RPA_SERVER']) # Mongo Database URI, save in os.environ variable
 
 # Create database 
 DATABASE_NAME = 'decarbon_platform'
