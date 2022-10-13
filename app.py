@@ -20,7 +20,8 @@ global_style = {'font-family': 'cursive'}
 # Dash components
 navbar = dbc.NavbarSimple(
     children=[
-        dbc.NavItem(dbc.NavLink(page['name'], href=page["relative_path"]))
+        # Disable link of setting
+        dbc.NavItem(dbc.NavLink(page['name'], href=page["relative_path"], class_name='disabled' if page['name'] == '設定' else ''))
         for page in dash.page_registry.values()
     ],
     brand="南亞塑膠碳排減量專案管理平台",
