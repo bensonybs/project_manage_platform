@@ -43,8 +43,6 @@ announcement_panel = dbc.Row([
 page_header = dbc.Row(dbc.Col(dcc.Markdown(children='### 設定')))
 
 page_content = dbc.Row(dbc.Col(dcc.Markdown(children='')))
-
-
 # Callback
 @callback([
     Output('create_announcement_button', 'n_clicks'),

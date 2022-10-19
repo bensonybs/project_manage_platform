@@ -9,39 +9,54 @@ import plotly.express as px
 import pandas as pd
 import modules.database as database  # modules/database.py
 
-dash.register_page(__name__, path='/', name='首頁')
-# Components
-# User announcement
-updateButton = dbc.Button('公告', n_clicks=0, id='update')
-announcemnets_panel = dbc.Row(children=[],
-                              id='announcements_panel',
-                              class_name='row-cols-3 g-2')
-page_header = dbc.Row(dbc.Col(dcc.Markdown(children='### 首頁')))
+dash.register_page(__name__, path='/', name='公告')
 
 
 # Callback
-@callback([
-    Output(announcemnets_panel, 'children'),
-    Output(updateButton, 'n_clicks')
-], Input(updateButton, 'n_clicks'))
-def updateAnnouncement(n_clicks):
-    resetClicks = 0
-    announcement_cards = []
-    if n_clicks > 0:
-        announcements = database.getDocuments('announcements', sorting={'date': 'desc'})
-        announcement_cards = [
-            dbc.Col(
-                dbc.Card([
-                    dbc.CardHeader(
-                        [
-                            html.Div(annoucement['title']),
-                            html.Div(annoucement['date'].strftime('%Y/%m/%d'))
-                        ],
-                        class_name='d-flex justify-content-between'),
-                    dbc.CardBody(annoucement['content'])
-                ], class_name='h-100')) for annoucement in announcements
-        ] # 
-    return announcement_cards, resetClicks
-    
-layout = dbc.Container([page_header, updateButton, announcemnets_panel],
-                       fluid=True)
+# @callback([
+#     Output(announcemnets_panel, 'children'),
+#     Output(updateButton, 'n_clicks')
+# ], Input(updateButton, 'n_clicks'))
+# def updateAnnouncement(n_clicks):
+#     resetClicks = 0
+#     announcement_cards = []
+#     if n_clicks > 0:
+#         announcements = database.getDocuments('announcements', sorting={'date': 'desc'})
+#         announcement_cards = [
+#             dbc.Col(
+#                 dbc.Card([
+#                     dbc.CardHeader(
+#                         [
+#                             html.Div(annoucement['title']),
+#                             html.Div(annoucement['date'].strftime('%Y/%m/%d'))
+#                         ],
+#                         class_name='d-flex justify-content-between'),
+#                     dbc.CardBody(annoucement['content'])
+#                 ], class_name='h-100')) for annoucement in announcements
+#         ]
+#     return announcement_cards, resetClicks
+def showLayout():
+    """一般layout變數可以直接設定為components，但此處為了可以在每次重新整理時至資料庫抓取最新資料。因此將layout指定為函式showLayout"""
+    # Components
+    # User announcement
+    announcements = database.getDocuments('announcements',
+                                          sorting={'date': 'desc'})
+    announcement_cards = [
+        dbc.Col(
+            dbc.Card([
+                dbc.CardHeader([
+                    html.Div(annoucement['title']),
+                    html.Div(annoucement['date'].strftime('%Y/%m/%d'))
+                ],
+                               class_name='d-flex justify-content-between'),
+                dbc.CardBody(annoucement['content'])
+            ],
+                     class_name='h-100')) for annoucement in announcements
+    ]
+    announcemnets_panel = dbc.Row(children=announcement_cards,
+                                  id='announcements_panel',
+                                  class_name='row-cols-3 g-2')
+    page_header = dbc.Row(dbc.Col(dcc.Markdown(children='### 首頁')))
+
+    return dbc.Container([page_header, announcemnets_panel], fluid=True)
+layout = showLayout
