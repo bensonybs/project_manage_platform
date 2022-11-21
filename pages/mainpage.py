@@ -7,8 +7,7 @@ from dash import dash_table
 from dash.dash_table.Format import Format, Group
 import plotly.express as px
 import pandas as pd
-import modules.database as database  # modules/database.py
-
+from modules.database import mongoDatabase, projects, project_details, production_emission  # modules/database.py
 dash.register_page(__name__, path='/', name='公告')
 
 
@@ -39,7 +38,7 @@ def showLayout():
     """一般layout變數可以直接設定為components，但此處為了可以在每次重新整理時至資料庫抓取最新資料。因此將layout指定為函式showLayout"""
     # Components
     # User announcement
-    announcements = database.getDocuments('announcements',
+    announcements = mongoDatabase.getDocuments('announcements',
                                           sorting={'date': 'desc'})
     announcement_cards = [
         dbc.Col(

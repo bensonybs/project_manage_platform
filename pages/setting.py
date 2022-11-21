@@ -7,7 +7,7 @@ from dash import dash_table
 from dash.dash_table.Format import Format, Group
 import plotly.express as px
 import pandas as pd
-import modules.database as database  # modules/database.py
+from modules.database import mongoDatabase, projects, project_details, production_emission  # modules/database.py
 
 dash.register_page(__name__, name='設定')
 # Component
@@ -70,7 +70,7 @@ def createNewAnnouncement(create_n_clicks, save_n_clicks, title, content, is_ope
             'date': datetime.now()
           }]
           collection_name = 'announcements'
-          database.insertDocuments(announcement, collection_name)
+          mongoDatabase.insertDocuments(announcement, collection_name)
           print(f'Save announcement: {announcement}')
           title = resetValue
           content = resetValue
