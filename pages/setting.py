@@ -11,7 +11,9 @@ from modules.database import mongoDatabase, projects, project_details, productio
 
 dash.register_page(__name__, name='設定')
 # Component
+page_header = dbc.Row(dbc.Col(dcc.Markdown(children='### 設定')))
 show_announcement_button = dbc.Button('顯示公告', n_clicks=0, id='show_announcement_button')
+announcementTable = dbc.Row(dbc.Col(children=[], id='announcements_table'), class_name='m-1')
 create_announcement_button = dbc.Button(children='新增公告',
                                        color='secondary',
                                        class_name='me-1',
@@ -40,7 +42,6 @@ announcement_panel = dbc.Row([
     dbc.Col(create_announcement_modal),
     dbc.Col(create_success_modal)
 ])
-page_header = dbc.Row(dbc.Col(dcc.Markdown(children='### 設定')))
 
 page_content = dbc.Row(dbc.Col(dcc.Markdown(children='')))
 # Callback
@@ -76,8 +77,27 @@ def createNewAnnouncement(create_n_clicks, save_n_clicks, title, content, is_ope
           content = resetValue
           is_open = not is_open
     return resetClicks, resetClicks, is_open, title, content
-
+    
+@callback(Output('announcements_table', 'children'), Input('show_announcement_button', 'n_clicks'))
+def toggleAnnouncementsTable(n_clicks):
+    if (n_clicks%2) == 1:
+        documents = mongoDatabase.getDocuments('announcements',
+                                        sorting={'date': 'desc'})
+        for document in documents:
+            document['_id'] = str(document['_id'])
+        table = html.Table(children=[
+        html.Tr([
+            html.Td(document['date'].strftime('%Y/%m/%d')),
+            html.Td(document['title']),
+            html.Td(document['content'])
+        ],
+                style={'border': '1px solid black'}) for document in documents
+        ],
+                    style={'border': '1px solid black'})
+        return table
+    else: 
+        return None
 
 #Layout
-layout = dbc.Container([page_header, announcement_panel, page_content],
+layout = dbc.Container([page_header, announcement_panel, announcementTable, page_content],
                        fluid=True)

@@ -127,7 +127,8 @@ production_emission = getDataFrameFromExcel('raw_production_emission')
 if __name__ == '__main__':
     # for i in range(3):
     #     mongoDatabase.insertDocuments( [{'title' : '測試', 'content': '隨意'+str(i), 'date': datetime.now()}], 'announcements')
-    # print(mongoDatabase.getDocuments('announcements', {'title': '測試'} , sorting={'date': 'desc'}))
     # mongoDatabase.updateDocuments('announcements', {'title': '測試'}, {'title' : '測試Update', 'content': '測試值'})
-    # mongoDatabase.deleteDocuments('announcements', {'title': 'Test'})
+    # mongoDatabase.deleteDocuments('announcements', {'title': '測試Update'})
+    # df = mongoDatabase.getDocuments('announcements', {'title': '測試'}, sorting={'date': 'desc'})
+    # print(df[0])
     pass
