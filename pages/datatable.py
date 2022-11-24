@@ -9,7 +9,7 @@ import pandas as pd
 from modules.database import mongoDatabase, projects, project_details, production_emission  # modules/database.py
 import data.seeds.projectSeeder as seedData
 
-dash.register_page(__name__, name='減量案件明細表')
+dash.register_page(__name__, name='減量案件明細')
 # Table data source
 df = seedData.projects
 
@@ -21,6 +21,8 @@ table_data_style = {
     'height': 'auto',
     'font-family': 'cursive'
 }
+
+
 class Utility:
     """Utility Functions"""
     def createForm(self, columns, values):
@@ -37,45 +39,35 @@ class Utility:
 
     def createDictWithoutValue(self, keys):
         return {key: None for key in keys}
+
+
 utility = Utility()
 # Dash components
 page_header = dbc.Row(dbc.Col(dcc.Markdown(children='### 碳排減量案件彙總')),
                       style={'potision': 'sticky'})
-# Collapse dorpdown filters
-dropdown_filters = dbc.Row(
-    dbc.Col(
-        dbc.Collapse(dbc.DropdownMenu(label="事業部",
-                                      children=[
-                                          dbc.DropdownMenuItem(division)
-                                          for division in df['事業部'].unique()
-                                      ],
-                                      color='secondary'),
-                     is_open=True)))
-control_panel = dbc.Row(
-    [
+# Control Panel
+page_size_dropdown = dbc.Col(dcc.Dropdown(
+    placeholder="顯示案件筆數",
+    options=[number for number in [10, 50, 100, 500, 1000, 2000]],
+    id='page_size_dropdown'),
+                             class_name='col-1')
+dropdown_filters = dbc.Col(dcc.Dropdown(
+    options=[division for division in df['事業部'].unique()],
+    id='dropdown_filter',
+    placeholder='事業部篩選'),
+                           class_name='col-1')
+control_panel = html.Div([
+    dbc.Row([
         dbc.Col(dbc.Button(
-            children='新增案件', color='secondary', id='create-button'),
+            children='新增案件', color='success', id='create-button'),
                 width='auto'),
-        dbc.Col(dbc.Button(children='篩選', color='info', id='collapse-button'),
-                width='auto'),
-        dbc.Col(dbc.DropdownMenu(
-            label="顯示案件筆數",
-            children=[
-                dbc.DropdownMenuItem(number)
-                for number in [10, 50, 100, 500, 1000, 2000]
-            ],
-            color='warning'),
-                width='auto'),
-        # dbc.Col(dbc.Button(children='匯出Excel(開發中)',
-        #                    color='danger',
-        #                    id='export-button',
-        #                    class_name='disabled'),
-        #         width='auto'),
         dbc.Col(dbc.Button(
-            children='表格使用說明', color='primary', id='description-button'),
+            children='表格使用說明', color='info', id='description-button', n_clicks=0),
                 width='auto')
     ],
-    class_name='mb-2')
+            class_name='mb-2'),
+    dbc.Row([page_size_dropdown, dropdown_filters])
+])
 # Modal
 project_modal = dbc.Modal([
     dbc.ModalHeader(dbc.ModalTitle('案件內容')),
@@ -89,14 +81,14 @@ description_modal = dbc.Modal([
     dbc.ModalHeader(dbc.ModalTitle('使用說明')),
     dbc.ModalBody([
         dcc.Markdown('''
-    1. 點擊篩選按鈕開啟篩選欄位
+    1. 點擊[事業部篩選]按鈕篩選事業部
+    2. 點擊[顯示案件筆數]調整表格每頁顯示案件筆數，預設為50筆
     2. 可直接在表格中修改資料，修改完畢後請點擊 **儲存**，若直接離開此頁則資料不會儲存
-    3. 雙擊該列即可開啟案件減碳量明細
     ''')
     ])
 ],
-                                 id='description-modal',
-                                 is_open=True)
+                              id='description-modal',
+                              is_open=False)
 modal_pannel = html.Div([project_modal, description_modal])
 # Data table
 table_columns = [{
@@ -108,7 +100,6 @@ table_columns = [{
     "type": 'numeric',
     "editable": False,
     "format": Format().group(True),
-    
 } if column == '投資費用(千元)' else {
     "name": column,
     "id": column,
@@ -172,9 +163,32 @@ def openUpdateModal(n_clicks, is_focused, active_cell, table_data):
     n_clicks = None
     return inputForm, modalOpen, n_clicks
 
+@callback([Output('description-modal', 'is_open'), Output('description-button', 'n_clicks')], Input('description-button', 'n_clicks'), prevent_initial_call=True)
+def showDescriptionModal(n_clicks):
+    if n_clicks > 0:
+        return True, n_clicks
+
+@callback(Output('data-table', 'data'), Input('dropdown_filter', 'value'))
+def filterTable(division):
+    # Filter data table via division selected by user.
+    if division:
+        filterCondition = df['事業部'] == division
+        dff = df[filterCondition].to_dict('records')
+        return dff
+    return df.to_dict('records')  # Return full dataframe back
+
+
+@callback(Output('data-table', 'page_size'),
+          Input('page_size_dropdown', 'value'),
+          prevent_initial_call=True,
+          suppress_callback_exceptions=True)
+def changeTablePageSize(size):
+    if size:
+        return size
+    return 50  # Default page size is 50
+
 
 # Dash layout
-layout = dbc.Container([
-    page_header, control_panel, dropdown_filters, modal_pannel, table
-],
-                       fluid=True)
+layout = dbc.Container(
+    [page_header, control_panel, modal_pannel, table],
+    fluid=True)
