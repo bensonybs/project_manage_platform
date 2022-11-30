@@ -50,12 +50,12 @@ page_size_dropdown = dbc.Col(dcc.Dropdown(
     placeholder="顯示案件筆數",
     options=[number for number in [10, 50, 100, 500, 1000, 2000]],
     id='page_size_dropdown'),
-                             class_name='col-1')
+                             class_name='col-2')
 dropdown_filters = dbc.Col(dcc.Dropdown(
     options=[division for division in df['事業部'].unique()],
     id='dropdown_filter',
     placeholder='事業部篩選'),
-                           class_name='col-1')
+                           class_name='col-2')
 control_panel = html.Div([
     dbc.Row([
         dbc.Col(dbc.Button(

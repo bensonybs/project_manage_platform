@@ -8,6 +8,7 @@ import pymongo
 
 class MongoDB():
     """
+    - 內含四個函式，對MongoDatabase進行CRUD
     - Mongo Server URI需要先在環境變數中設定，再由os.environ引用
     - 考慮應該不常會有切換database的狀況，將database名稱寫入 DATABASE_NAME
     """
@@ -122,7 +123,7 @@ def getDataFrameFromExcel(sheet_name: str):
 mongoDatabase = MongoDB('MONGODB_RPA_SERVER', 'decarbon_platform')
 projects = getDataFrameFromExcel('projects')
 project_details = getDataFrameFromExcel('project_details')
-production_emission = getDataFrameFromExcel('raw_production_emission')
+production_emission = getDataFrameFromExcel('production_emission')
 
 if __name__ == '__main__':
     # for i in range(3):
