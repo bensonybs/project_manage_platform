@@ -6,12 +6,14 @@ from dash import dash_table
 from dash.dash_table.Format import Format, Group
 import plotly.express as px
 import pandas as pd
-from modules.database import mongoDatabase, projects, project_details, production_emission  # modules/database.py
 import data.seeds.projectSeeder as seedData
-
+from modules.database import mongoDatabase, excelDataSource # modules/database.py
 dash.register_page(__name__, name='減量案件明細')
 # Table data source
-df = seedData.projects
+projects = excelDataSource.getDataFrameFromSheet('projects')
+project_details = excelDataSource.getDataFrameFromSheet('project_details')
+production_emission = excelDataSource.getDataFrameFromSheet('production_emission')
+df = projects
 
 # Style
 global_style = {}
@@ -148,8 +150,7 @@ table = dbc.Row(
           [State('data-table', 'active_cell'),
            State("data-table", "data")],
           prevent_initial_call=True)
-def openUpdateModal(n_clicks, is_focused, active_cell, table_data):
-    print(n_clicks, is_focused)
+def createOrUpdateData(n_clicks, is_focused, active_cell, table_data):
     columns = df.columns
     if n_clicks:
         rowData = utility.createDictWithoutValue(columns)

@@ -111,19 +111,19 @@ class MongoDB():
         print(result)
         return None
 
-EXCEL_DATA_PATH = './data/database.xlsx'
+class Excel():
+    def __init__(self, excel_path: str):
+        self.EXCEL_DATA_PATH = excel_path
+        
+    def getDataFrameFromSheet(self, sheet_name: str):
+        # 取得填報碳排專案主頁資料
+        df = pd.read_excel(self.EXCEL_DATA_PATH, sheet_name)
+        return df
 
-
-def getDataFrameFromExcel(sheet_name: str):
-    # 取得填報碳排專案主頁資料
-    df = pd.read_excel(EXCEL_DATA_PATH, sheet_name)
-    return df
 
 # Exports 
-mongoDatabase = MongoDB('MONGODB_RPA_SERVER', 'decarbon_platform')
-projects = getDataFrameFromExcel('projects')
-project_details = getDataFrameFromExcel('project_details')
-production_emission = getDataFrameFromExcel('production_emission')
+mongoDatabase = MongoDB(uri_variable='MONGODB_RPA_SERVER', database_name='decarbon_platform')
+excelDataSource = Excel(excel_path='./data/database.xlsx')
 
 if __name__ == '__main__':
     # for i in range(3):

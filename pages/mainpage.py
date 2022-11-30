@@ -7,7 +7,7 @@ from dash import dash_table
 from dash.dash_table.Format import Format, Group
 import plotly.express as px
 import pandas as pd
-from modules.database import mongoDatabase, projects, project_details, production_emission  # modules/database.py
+from modules.database import mongoDatabase, excelDataSource # modules/database.py
 dash.register_page(__name__, path='/', name='公告')
 
 
