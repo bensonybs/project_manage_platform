@@ -7,12 +7,14 @@ from dash.dash_table.Format import Format, Group
 import plotly.express as px
 import pandas as pd
 import data.seeds.projectSeeder as seedData
-from modules.database import mongoDatabase, excelDataSource # modules/database.py
+from modules.database import mongoDatabase, excelDataSource, basicData  # modules/database.py
+
 dash.register_page(__name__, name='減量案件明細')
 # Table data source
 projects = excelDataSource.getDataFrameFromSheet('projects')
 project_details = excelDataSource.getDataFrameFromSheet('project_details')
-production_emission = excelDataSource.getDataFrameFromSheet('production_emission')
+production_emission = excelDataSource.getDataFrameFromSheet(
+    'production_emission')
 df = projects
 
 # Style
@@ -33,8 +35,68 @@ class Utility:
         for column in columns:
             title = dbc.Col(dbc.Label(children=column, html_for=column),
                             width='2')
-            input = dbc.Col(dbc.Textarea(id=column, value=values[column]),
-                            width='6')
+            # Shit code to assgin input form type, need to be refactor
+            if column == 'id':
+                input = dbc.Col(dcc.Markdown(
+                    id=column, children=f'系統自帶id_{values[column]}'),
+                                width='6')
+            elif column == '公司':
+                input = dbc.Col(dcc.Dropdown(id=column,
+                                             placeholder=column,
+                                             options=basicData.companies,
+                                             value=values[column]),
+                                width='6')
+            elif column == '事業部':
+                input = dbc.Col(dcc.Dropdown(id=column,
+                                             placeholder=column,
+                                             options=basicData.division,
+                                             value=values[column]),
+                                width='6')
+            elif column == '廠處':
+                input = dbc.Col(dcc.Dropdown(id=column,
+                                             placeholder=column,
+                                             options=basicData.departments,
+                                             value=values[column]),
+                                width='6')
+            elif column == '減排專案類別':
+                input = dbc.Col(dcc.Dropdown(id=column,
+                                             placeholder=column,
+                                             options=basicData.project_types,
+                                             value=values[column]),
+                                width='6')
+            elif column == '投資費用(千元)':
+                input = dbc.Col(dcc.Input(id=column,
+                                          type='number',
+                                          step=1,
+                                          min=0,
+                                          value=values[column]),
+                                width='6')
+            elif column == 'ERP立案案號':
+                input = dbc.Col(dcc.Input(id=column,
+                                          type='text',
+                                          value=values[column]),
+                                width='6')
+            elif column == '預完日':
+                input = dbc.Col(dcc.DatePickerSingle(id=column,
+                                                     month_format='MMM Y',
+                                                     display_format='Y/M/D',
+                                                     date=values[column]),
+                                width='6') # https://dash.plotly.com/dash-core-components/datepickersingle
+            elif column == '案件年分':
+                input = dbc.Col(dcc.Input(id=column,
+                                          type='number',
+                                          step=1,
+                                          min=2000,
+                                          value=values[column]),
+                                width='6')
+            elif column == '減排量':  # Wait for create this field
+                input = dbc.Col(dcc.Dropdown(id=column,
+                                             placeholder=column,
+                                             options=basicData.division),
+                                width='6')
+            else:
+                input = dbc.Col(dbc.Textarea(id=column, value=values[column]),
+                                width='6')
             formChildren.append(dbc.Row([title, input], class_name='mb-1'))
         form = dbc.Form(children=formChildren, id='project-form')
         return form
@@ -63,8 +125,10 @@ control_panel = html.Div([
         dbc.Col(dbc.Button(
             children='新增案件', color='success', id='create-button'),
                 width='auto'),
-        dbc.Col(dbc.Button(
-            children='表格使用說明', color='info', id='description-button', n_clicks=0),
+        dbc.Col(dbc.Button(children='表格使用說明',
+                           color='info',
+                           id='description-button',
+                           n_clicks=0),
                 width='auto')
     ],
             class_name='mb-2'),
@@ -83,8 +147,8 @@ description_modal = dbc.Modal([
     dbc.ModalHeader(dbc.ModalTitle('使用說明')),
     dbc.ModalBody([
         dcc.Markdown('''
-    1. 點擊[事業部篩選]按鈕篩選事業部
-    2. 點擊[顯示案件筆數]調整表格每頁顯示案件筆數，預設為50筆
+    1. 點擊***事業部篩選***按鈕篩選事業部
+    2. 點擊***顯示案件筆數***調整表格每頁顯示案件筆數，預設為50筆
     2. 可直接在表格中修改資料，修改完畢後請點擊 **儲存**，若直接離開此頁則資料不會儲存
     ''')
     ])
@@ -164,10 +228,17 @@ def createOrUpdateData(n_clicks, is_focused, active_cell, table_data):
     n_clicks = None
     return inputForm, modalOpen, n_clicks
 
-@callback([Output('description-modal', 'is_open'), Output('description-button', 'n_clicks')], Input('description-button', 'n_clicks'), prevent_initial_call=True)
+
+@callback([
+    Output('description-modal', 'is_open'),
+    Output('description-button', 'n_clicks')
+],
+          Input('description-button', 'n_clicks'),
+          prevent_initial_call=True)
 def showDescriptionModal(n_clicks):
     if n_clicks > 0:
         return True, n_clicks
+
 
 @callback(Output('data-table', 'data'), Input('dropdown_filter', 'value'))
 def filterTable(division):
@@ -188,8 +259,17 @@ def changeTablePageSize(size):
         return size
     return 50  # Default page size is 50
 
+"""
+Wait for database built, and have to deal with multiple callback output
+"""
+# @callback([Output('project-modal', 'is_open'),
+#            Output('save', 'n_clicks')],
+#            Input('save', 'n_clicks'))
+def saveData(n_clicks):
+    # Save data to database
+    return False, 0 # Reset and close modal
+
 
 # Dash layout
-layout = dbc.Container(
-    [page_header, control_panel, modal_pannel, table],
-    fluid=True)
+layout = dbc.Container([page_header, control_panel, modal_pannel, table],
+                       fluid=True)

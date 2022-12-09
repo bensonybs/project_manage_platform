@@ -119,10 +119,26 @@ class Excel():
         # 取得填報碳排專案主頁資料
         df = pd.read_excel(self.EXCEL_DATA_PATH, sheet_name)
         return df
-
-
+class SelfDefineData():
+    def __init__(self):
+        self.companies = ['南亞', '轉投資公司']
+        self.division = ['工務部', '化工一部', '化工二部', '化工三部', '塑膠一部', '塑膠二部', '塑膠三部', '電子材料部',
+       '聚酯膜部', '纖維部', '文菱科技', '必成', '南中石化', '南亞科技', '南電']
+        self.departments = ['工務部其他', '林口公用廠', '配電盤廠', '嘉義公用廠', '嘉義公用廠(新港)', '嘉義機工廠', '樹林公用廠',
+       '錦興公用廠', '2EH廠', 'PA廠', '可塑劑廠', '異壬醇廠', 'MA廠', '丁二醇廠', '丙二酚廠',
+       '馬來酐廠', '過氧化氫廠', 'EG1', 'EG3', 'EG4', '仁武二廠', '新港一廠', '嘉義三廠',
+       '樹林一廠', '門窗一廠', '門窗二廠', '工程塑膠廠', '仁武一廠', '林口廠', '林園廠', '嘉義一廠',
+       '嘉義二廠', '嘉義四廠', '玻纖布一廠', '玻纖布二廠', '玻纖布三廠', '玻纖布四廠', '麥寮EPOXY廠',
+       '新港CCL一廠', '新港CCL二廠', '新港CCL三廠', '銅箔一廠', '銅箔二廠', '銅箔三廠', '樹三廠',
+       '樹林二廠', '製膜一廠', '製膜二廠', '離型膜廠', '公用處', '染整廠', '紡撚一廠', '紡撚三廠',
+       '紡撚四廠', '製棉廠', 'XJ', '玻纖絲一、二廠', '玻纖絲一廠', '玻纖絲二廠', 'EG2', '3A',
+       '一廠', '二廠', '五廠', '六廠']
+        self.project_types = ['政策因素影響', '設備整改汰換', '製程技術改善', '低碳能源轉型', '能源回收利用', '跨廠能源整合', '碳捕捉',
+       '其他改善', '智能管理系統', '產量變化影響', '使用再生料取代原生料']
+    
 # Exports 
 mongoDatabase = MongoDB(uri_variable='MONGODB_RPA_SERVER', database_name='decarbon_platform')
+basicData = SelfDefineData()
 excelDataSource = Excel(excel_path='./data/database.xlsx')
 
 if __name__ == '__main__':
