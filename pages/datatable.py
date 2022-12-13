@@ -222,7 +222,6 @@ def createOrUpdateData(n_clicks, is_focused, active_cell, table_data):
         rowData = table_data[active_cell['row']]
     else:
         raise dash.exceptions.PreventUpdate
-    print(rowData)
     inputForm = utility.createForm(columns, rowData)
     modalOpen = True
     n_clicks = None
