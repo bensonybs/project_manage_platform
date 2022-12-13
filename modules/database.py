@@ -1,11 +1,12 @@
 import pandas as pd
 import os
+from dotenv import load_dotenv
 from pymongo import MongoClient
 from datetime import datetime
 
 import pymongo
 
-
+load_dotenv()
 class MongoDB():
     """
     - 內含四個函式，對MongoDatabase進行CRUD
