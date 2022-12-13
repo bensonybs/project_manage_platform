@@ -1,12 +1,10 @@
 import pandas as pd
 import os
-from dotenv import load_dotenv
 from pymongo import MongoClient
 from datetime import datetime
 
 import pymongo
 
-load_dotenv()
 class MongoDB():
     """
     - 內含四個函式，對MongoDatabase進行CRUD
@@ -137,7 +135,8 @@ class SelfDefineData():
         self.project_types = ['政策因素影響', '設備整改汰換', '製程技術改善', '低碳能源轉型', '能源回收利用', '跨廠能源整合', '碳捕捉',
        '其他改善', '智能管理系統', '產量變化影響', '使用再生料取代原生料']
     
-# Exports 
+# Exports
+
 mongoDatabase = MongoDB(uri_variable='MONGODB_RPA_SERVER', database_name='decarbon_platform')
 basicData = SelfDefineData()
 excelDataSource = Excel(excel_path='./data/database.xlsx')
