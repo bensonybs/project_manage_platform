@@ -1,0 +1,9 @@
+cd /home/ubuntu/DashImplement/DeCarbon
+nohup stdbuf -oL python -u app.py >> log.txt 2>&1 &
+
+
+tail -n 0 -f /home/ubuntu/DashImplement/DeCarbon/log.txt
+
+
+
+http://10.3.61.81:9951
