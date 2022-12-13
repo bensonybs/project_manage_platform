@@ -6,7 +6,6 @@ from pymongo import MongoClient
 # Import user-defined module in project_manage_platform/modules
 import sys
 sys.path.append('D:/04_桌上型電腦D槽/01_Git_Repository/project_manage_platform/modules')
-from terminal_color import TerminalColor
 
 # Create the documents (rows)
 """The data below is needed in other place"""
@@ -28,7 +27,7 @@ def createSeedData(dropExistingDataBase: bool = False, dropExistingCollections: 
     DATABASE_NAME = 'decarbon_platform'
     if dropExistingDataBase:
         client.drop_database(DATABASE_NAME)
-        print(f'{TerminalColor.WARNING}* Drop existing database, {{name: \'{DATABASE_NAME}\'}}{TerminalColor.ENDC}')
+        print(f'* Drop existing database, {{name: \'{DATABASE_NAME}\'}}')
     db = client[DATABASE_NAME]
 
     # Create Collections (table)
