@@ -110,9 +110,11 @@ class Utility:
                 )
             elif column == "減排量":  # Wait for create this field
                 input = dbc.Col(
-                    dcc.Dropdown(
-                        id=column, placeholder=column, options=basicData.division
-                    ),
+                    dcc.Input(id=column,
+                                          type='number',
+                                          step=1,
+                                          min=2000,
+                                          value=values[column]),
                     width="6",
                 )
             else:
@@ -214,7 +216,7 @@ table_columns = [
         "editable": False,
         "format": Format().group(True),
     }
-    if column == "投資費用(千元)"
+    if column in ['投資費用(千元)', '減排量']
     else {
         "name": column,
         "id": column,
